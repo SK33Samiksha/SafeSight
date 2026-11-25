@@ -1,0 +1,9 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+deepface>=0.0.93
+tf-keras
+numpy
+pymongo>=4.6
+requests
+Pillow>=11.2
+python-dotenv

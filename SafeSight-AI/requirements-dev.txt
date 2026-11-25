@@ -1,0 +1,4 @@
+# Extra packages for running the tests (pytest tests/)
+pytest
+mongomock
+httpx

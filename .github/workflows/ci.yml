@@ -1,0 +1,56 @@
+﻿# Runs automatically on every push and pull request (see the "Actions" tab on GitHub)
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    name: Backend tests (Express)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: SafeSight-backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: SafeSight-backend/package-lock.json
+      - run: npm ci
+      - run: npm test
+
+  frontend:
+    name: Frontend type-check and build (Next.js)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: SafeSight-frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: SafeSight-frontend/package-lock.json
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+
+  ai:
+    name: AI service tests (FastAPI)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: SafeSight-AI
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install fastapi httpx numpy pymongo requests Pillow python-dotenv -r requirements-dev.txt
+      - run: pytest -q tests
